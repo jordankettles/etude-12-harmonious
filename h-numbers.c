@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 
-/* Be reasonably careful and sensible. */
+#define MAX 2000000
+
 /* Author: Jordan Kettles 2147684
  * Date 28/03/21 */
 
@@ -15,31 +16,46 @@ void *emalloc(size_t t) {
     return result;
 }
 
-int * find_divisors(int n) {
-  /*find the divisors of n.*/
-  /* Upper bound for amount of divisors.*/
-  int * divisors = emalloc(sizeof(int) * round(n * 1.0/3.0 + 1));
-  int divisor_count = 0;
-  int d = 2;
-  /* Should this be ceil? */
-  for(d = 2; d < n / 2; d++) {
+/* Find divisors finds all the divisors of a given int and the sum of those
+ * divisors.
+ * @param int n Number to find the divisors of.
+ * @return int The sum of the divisors.
+ */
+int find_sum_of_divisors(int n) {
+  int sum = 0;
+  int d;
+  for(d = sqrt(n)+1; d > 1; d--) {
     if (n % d == 0) {
-      printf("%d\n", n/d);
-      divisors[divisor_count++] = n / d;
-      printf("%d\n", d);
-      divisors[divisor_count++] = d;
+      sum += n / d;
+      if (n/d != d) {
+        sum += d;
+      }
     }
   }
-  divisors = realloc(divisors, sizeof(int) * divisor_count);
-  return divisors;
+  return sum;
 }
 
-
+/* Starting point of the program.*/
 int main() {
-  int * six_divisors = find_divisors(6);
-  free(six_divisors);
+  int i, j, sum_of_j;
+  int * computed = emalloc(sizeof(int) * (MAX*1.5));
+  for(i = 0; i < MAX*1.5; i++) {
+    computed[i] = 0;
+  }
+  for(i = 1; i < MAX; i++) {
+    if (computed[i] > 0) {
+      continue;
+    }
+    j = find_sum_of_divisors(i);
+    sum_of_j = find_sum_of_divisors(j);
+    if(sum_of_j == i) {
+      printf("%d %d\n", i, j);
+      computed[j] = i;
+    }
+  }
   /* starting at i = 4, find all divisors of that number excluding 1 and sum them. Then find
-  // all divisors of that number and sum those. If that sum is equal to i, then
-  // print out both numbers. Add one to i. */
+  all divisors of that number and sum those. If that sum is equal to i, then
+  print out both numbers. Add one to i. */
+  free(computed);
   return EXIT_SUCCESS;
 }
