@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 #define MAX 2000000
 
@@ -38,24 +39,23 @@ int find_sum_of_divisors(int n) {
 /* Starting point of the program.*/
 int main() {
   int i, j, sum_of_j;
-  int * computed = emalloc(sizeof(int) * (MAX*1.5));
-  for(i = 0; i < MAX*1.5; i++) {
-    computed[i] = 0;
-  }
+  time_t start_time, end_time;
+  time(&start_time);
   for(i = 1; i < MAX; i++) {
-    if (computed[i] > 0) {
+    j = find_sum_of_divisors(i);
+    if (j < i) {
       continue;
     }
-    j = find_sum_of_divisors(i);
     sum_of_j = find_sum_of_divisors(j);
     if(sum_of_j == i) {
       printf("%d %d\n", i, j);
-      computed[j] = i;
     }
   }
   /* starting at i = 4, find all divisors of that number excluding 1 and sum them. Then find
   all divisors of that number and sum those. If that sum is equal to i, then
   print out both numbers. Add one to i. */
-  free(computed);
+  time(&end_time);
+  printf("%.2f\n", difftime(end_time, start_time));
+
   return EXIT_SUCCESS;
 }
